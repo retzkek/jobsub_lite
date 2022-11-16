@@ -1,0 +1,26 @@
+Bootstrap: docker
+From: fermilab/fnal-wn-sl7:latest
+
+%files
+    bin /opt/jobsub_lite/
+    lib /opt/jobsub_lite/
+    templates /opt/jobsub_lite/
+    config/config.d/50-jobsub_lite.configs /etc/condor/config.d/
+    config/config.d/51-group_fermilab.configs /etc/condor/config.d/
+
+%environment
+    export PATH=/opt/jobsub_lite/bin:$PATH
+
+%post
+    yum -y erase singularity apptainer
+    yum -y update
+    yum -y install cigetcert htgettoken python36-jinja2 python3-condor
+
+%apprun jobsub_q
+    /opt/jobsub_lite/bin/jobsub_q
+
+%apprun jobsub_submit
+    /opt/jobsub_lite/bin/jobsub_submit
+
+%runscript
+    /bin/bash
